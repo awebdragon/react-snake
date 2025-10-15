@@ -1,6 +1,5 @@
 import reactLogo from './assets/react.svg'
 import snakeLogo from '/favicon.ico'
-import './App.css'
 
 function App() {
 
