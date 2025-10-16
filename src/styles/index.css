@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./game-board.css";
+@import "./theme.css";
 
 /* accessible font sizing */
 :root {
@@ -10,43 +12,6 @@ body {
   line-height: 1.5;
 }
 /* remember, changing the base font size also undermine's the user's preference - browser preference's aren't written in percentages, they ask what pixel size the user wants to read at, so if you rescale to base 10, the math is easier, but the user's 20px preference suddenly gets reset to 12.5px. For accessibility, let the browser set the default - you're typing on a big ole calculator right now, so use it to divide by 16 */
-
-/** THEME **/
-@theme {
-    --color-white: #fff;
-    --color-black: #000;
-    /* use the "stone" grays that come with Tailwind as base grays, no need to set all that up here :) */
-    /* Why stone instead of true neutral? Feels a little warmer than true neutral, friendlier, game-y-er, forest-y-er. */
-
-    --color-primary-light: color-mix(in srgb, var(--color-primary) 75%, white);
-    --color-primary: #77B255;
-    --color-primary-dark: #5E8D44;
-    --color-primary-darkest: #2D332A;
-
-    --color-secondary-light: color-mix(in srgb, var(--color-secondary) 75%, white);
-    --color-secondary: #9E5CBF; /*use: secondary elements like buttons, or any other element that should pop next to primary. Don't overuse.*/
-    --color-secondary-dark: color-mix(in srgb, var(--color-secondary) 75%, black);
-
-    --color-tertiary-lightest: color-mix(in srgb, var(--color-tertiary) 30%, white);
-    --color-tertiary-light: color-mix(in srgb, var(--color-tertiary) 75%, white);
-    --color-tertiary: #BF5C87; /*if used, use very sparingly for small decorative elements, or the snake food*/
-    --color-tertiary-dark: color-mix(in srgb, var(--color-tertiary) 75%, black);
-
-    /* "warning": tailwind amber, good background value is 700 */
-    /* "error": tailwind red, good background value is 600 */
-    /* "success": primary already uses a close enough green, but if primary ever changes to something else, use Tailwind green, good background value would be 600 again */
-
-    --color-background: #101512;
-
-    --color-surface-light: color-mix(in srgb, var(--color-surface) 85%, white);
-    --color-surface: #1C211E;
-    --color-surface-dark: color-mix(in srgb, var(--color-surface) 85%, black);
-    
-    --color-text: #E8EAE7;
-    --color-text-subtle: #B5B8B3;
-    --color-text-inverse: #1C1719;
-    --color-text-inverse-subtle: #332A2E;
-}
 
 @layer base{
     *:focus-visible{
