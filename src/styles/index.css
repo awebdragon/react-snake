@@ -37,7 +37,10 @@ body {
     /* "success": primary already uses a close enough green, but if primary ever changes to something else, use Tailwind green, good background value would be 600 again */
 
     --color-background: #101512;
+
+    --color-surface-light: color-mix(in srgb, var(--color-surface) 85%, white);
     --color-surface: #1C211E;
+    --color-surface-dark: color-mix(in srgb, var(--color-surface) 85%, black);
     
     --color-text: #E8EAE7;
     --color-text-subtle: #B5B8B3;
@@ -45,85 +48,88 @@ body {
     --color-text-inverse-subtle: #332A2E;
 }
 
-*:focus-visible{
-    /* Inner indicator */
-    outline: 3px var(--color-primary-darkest) solid;
-    outline-offset: 0;
-    
-    /* Outer indicator */
-    box-shadow: 0 0 0 5px var(--color-tertiary-lightest);
+@layer base{
+    *:focus-visible{
+        /* Inner indicator */
+        outline: 3px var(--color-primary-darkest) solid;
+        outline-offset: 0;
+        
+        /* Outer indicator */
+        box-shadow: 0 0 0 5px var(--color-tertiary-lightest);
+    }
+
+    body{
+        @apply p-3 bg-background text-text;
+    }
+
+    /* some common element theme defaults */
+    a{
+        color: var(--color-primary-light)
+    }
+    a:hover{
+        color: #fff;
+        text-decoration: underline;
+    }
+    a:active{
+        color: var(--color-text-subtle)
+    }
+
+    h1, h2, h3, h4, h5, h6{
+        @apply mt-4 mb-2;
+    }
+    h1{
+        @apply text-5xl;
+    }
+    h2{
+        @apply text-4xl;
+    }
+    h3{
+        @apply text-3xl;
+    }
+    h4{
+        @apply text-2xl;
+    }
+    h5{
+        @apply text-xl;
+    }
+    h6{
+        @apply text-lg;
+    }
+    p{
+        @apply mb-2;
+    }
 }
 
-:root{
-    @apply p-3;
-    background-color: var(--color-background);
-    color: var(--color-text)
-}
+/* some default common global component behavior */
+@layer components{
+    .logo {
+        width: 2.5rem;
+        height: auto;
+    }
 
-/* some common element theme defaults */
-a{
-    color: var(--color-primary-light)
-}
-a:hover{
-    color: #fff;
-    text-decoration: underline;
-}
-a:active{
-    color: var(--color-text-subtle)
-}
-
-.button{
-    @apply m-2 px-7 py-3 rounded-md inline-flex items-center justify-center font-semibold;
-}
-.button:hover{
-    text-decoration: none;
-    cursor: pointer;
-}
-.button--primary{
-    @apply bg-primary text-text-inverse;
-}
-.button--primary:hover{
-    @apply bg-primary-light text-text-inverse;
-}
-.button--secondary{
-    @apply bg-secondary text-text-inverse;
-}
-.button--secondary:hover{
-    @apply bg-secondary-light text-text-inverse;
-}
-.button--stone{
-    @apply bg-stone-400 text-text-inverse;
-}
-.button--stone:hover{
-    @apply bg-stone-200 text-text-inverse;
-}
-
-h1, h2, h3, h4, h5, h6{
-    @apply mt-4 mb-2;
-}
-h1{
-    @apply text-5xl;
-}
-h2{
-    @apply text-4xl;
-}
-h3{
-    @apply text-3xl;
-}
-h4{
-    @apply text-2xl;
-}
-h5{
-    @apply text-xl;
-}
-h6{
-    @apply text-lg;
-}
-p{
-    @apply mb-2;
-}
-
-.logo {
-  width: 2.5rem;
-  height: auto;
+    .button{
+        @apply m-2 px-7 py-3 rounded-md inline-flex items-center justify-center font-semibold;
+    }
+    .button:hover{
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .button--primary{
+        @apply bg-primary text-text-inverse;
+    }
+    .button--primary:hover{
+        @apply bg-primary-light text-text-inverse;
+    }
+    .button--secondary{
+        @apply bg-secondary text-text-inverse;
+    }
+    .button--secondary:hover{
+        @apply bg-secondary-light text-text-inverse;
+    }
+    .button--stone{
+        @apply bg-stone-400 text-text-inverse;
+    }
+    .button--stone:hover{
+        @apply bg-stone-200 text-text-inverse;
+    }
 }
