@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react"
+import ScoreBoard from "./ScoreBoard"
 
 const GameBoard = (props) => {
     const [snake, setSnake] = useState([{x: 10, y: 10}])
@@ -14,6 +15,55 @@ const GameBoard = (props) => {
      * {x:0, y:-1} → up
      */
 
+    // we need to be able to commit the current direction until the next interval, to prevent rapid key presses from doubling-back the snake
+    const [inputLocked, setInputLocked] = useState(false)
+
+    // stop - game over time
+    const [gameOver, setGameOver] = useState(false)
+
+    // score tracking
+    const [score, setScore] = useState(0)
+
+    // Allow keyboard controls, prevent snake from moving backwards into itself
+    const handleKeyDown = useCallback((event) => { // a normal callback function - that is, a function that we set to be called *later*, like after a timeout or something else runs - will get rebuilt every render. We basically tell React "there's no need to rebuild this unless the dependencies updated, because the function is still behaving the same way". Re-building the function may not have much of an impact on our little snake app, but in large/complex apps and in cases where renders are happening often - even ours renders every couple hundred milliseconds, so pretty often compared to a typical webpage - it can be a big hit on performance. If our app gets complex enough, we may even start seeing input delays. We want to tell React "hey, this function hasn't changed, don't rebuild it each time the component updates" to save on that performance.
+        const key = event.key.toLowerCase()
+        if (["arrowup", "arrowdown", "arrowleft", "arrowright", "w", "a", "s", "d", " "].includes(key)) {
+            event.preventDefault()
+        }
+
+        // toggle pause/resume on spacebar
+        if (key === " ") {
+            setRunning((prevRunning) => !prevRunning)
+            return // don’t also change direction
+        }
+
+        // ignore input if locked
+        if (inputLocked) return
+
+        setDirection((prevDir) => {
+            // direction logic
+            switch (key) {
+                case "w":
+                case "arrowup":
+                    return prevDir.y === 1 ? prevDir : { x: 0, y: -1 }
+                case "s":
+                case "arrowdown":
+                    return prevDir.y === -1 ? prevDir : { x: 0, y: 1 }
+                case "a":
+                case "arrowleft":
+                    return prevDir.x === 1 ? prevDir : { x: -1, y: 0 }
+                case "d":
+                case "arrowright":
+                    return prevDir.x === -1 ? prevDir : { x: 1, y: 0 }
+                default:
+                    return prevDir
+            }
+        })
+
+        // lock input until next move tick
+        setInputLocked(true)
+    }, [])
+
     // build array of all the cells' positions
     const cells = Array.from(
         {length: props.gridSize * props.gridSize}, // make an array with this many slots
@@ -25,13 +75,15 @@ const GameBoard = (props) => {
         })
     )
 
-    const cellSize = 20; // pixels, for now — to implement responsive later
+    const cellSize = 20 // pixels, for now — to implement responsive later
 
     useEffect(() => {
         if (!running) return
 
         const interval = setInterval(() => {
-            setSnake((prevSnake) => { 
+            setSnake((prevSnake) => {
+                setInputLocked(false) // allow new input for the next tick
+
                 const newHead = { // move the snake head per the direction
                     x: (prevSnake[0].x + direction.x + props.gridSize) % props.gridSize,
                     y: (prevSnake[0].y + direction.y + props.gridSize) % props.gridSize,
@@ -40,24 +92,52 @@ const GameBoard = (props) => {
                 // increase the snake length if she eats food
                 const ateFood = newHead.x === food.x && newHead.y === food.y
                 const newSnake = [newHead, ...prevSnake]
+
+                // oops, ate myself
+                const hitSelf = newSnake.slice(1).some((segment) => segment.x === newHead.x && segment.y === newHead.y) // ignoring the head, and running another "is the current cell a snake" .some method - does the current head overlap ANY of the x/y positions noted in the full snake body array?
+                if (hitSelf){
+                    setRunning(false)
+
+                    setGameOver(true)
+
+                    return prevSnake
+                }
+
                 if (!ateFood) newSnake.pop()
                 else {
-                    // reposition food randomly
-                    setFood({
-                        x: Math.floor(Math.random() * props.gridSize),
-                        y: Math.floor(Math.random() * props.gridSize),
-                    });
+                    // update score
+                    setScore( (prevScore) => prevScore + 100 )
+
+                    // reposition food randomly, but avoid the snake body
+                    let newFood
+                    do{
+                        newFood = {
+                            x: Math.floor(Math.random() * props.gridSize),
+                            y: Math.floor(Math.random() * props.gridSize),
+                        }
+                    } while (
+                        newSnake.some(segment => segment.x === newFood.x && segment.y === newFood.y) // we're used to seeing this .some by now, right? Check if any segment of the snake is on the proposed new food cell
+                    )
+                    setFood(newFood)
                 }
 
                 return newSnake
             })
-        }, 200) // ms per interval
+        }, 175) // ms per interval
 
         return () => clearInterval(interval) // cleanup
-    }, [running, direction, food, props.gridSize])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [running, direction, props.gridSize])
+
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeyDown)
+        return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [handleKeyDown])
 
     return (
         <>
+            <ScoreBoard score={score} gameOver={gameOver} />
+
             <div
                 className="grid border-3 border-surface-light bg-surface"
                 style={{
@@ -90,13 +170,46 @@ const GameBoard = (props) => {
                     )
                 }) }
             </div>
+
+            {gameOver && (
+                <div className="absolute inset-0 w-full h-vh flex flex-col justify-center items-center bg-black/70 z-10">
+                    <h2 className="font-bold mb-4">Game Over</h2>
+                    <button
+                        onClick={() => {
+                            setGameOver(false)
+                            setSnake([{ x: 10, y: 10 }])
+                            setDirection({ x: 1, y: 0 })
+                            setFood({ x: 14, y: 10 })
+                            setRunning(false)
+                            setScore(0)
+                        }}
+                        className="button button--secondary text-lg"
+                    >
+                        Restart
+                    </button>
+                </div>
+            )}
     
-            <button
-                onClick={() => setRunning((prevRunning) => !prevRunning)}
-                className="button button--primary"
-            >
-                {running ? "Pause" : "Start"}
-            </button>
+            <div className="mt-2 flex flex-row justify-center items-center">
+                <button
+                    onClick={() => setRunning((prevRunning) => !prevRunning)}
+                    className="button button--primary"
+                >
+                    {running ? "Pause" : "Start"}
+                </button>
+                <button
+                    onClick={() => {
+                        setRunning(false)
+                        setSnake([{ x: 10, y: 10 }])
+                        setDirection({ x: 1, y: 0 })
+                        setFood({ x: 14, y: 10 })
+                        setScore(0)
+                    }}
+                    className="button button--secondary"
+                >
+                    Reset
+                </button>
+            </div>
         </>
     )
 }
