@@ -1,12 +1,11 @@
-# React + Vite
+# React Snake
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+My first ever React project, straight out of training! Practicing the fundamentals, getting a little Tailwind practice in for good measure, and making a little green snake move across the screen and grow as she eats.
 
-Currently, two official plugins are available:
+[Take a look](awebdragon.github.io/react-snake/) - and feel free to go through the files, too. Beware of self-learner / nerdy comments.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Current progress: the game loop is completed for the player-controlled version. I'll be keeping this version as a fallback, but the whole point of this project was to get the snake playing _herself_.
 
-## Expanding the ESLint configuration
+Next steps: clean up the main App so that game logic and other utilities are separated into other files. This is a preparation step for creating the default self-playing game mode.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Far future upgrades: learning typescript and getting it integrated - just as an excuse to learn more. Maybe mobile controls if I'm feeling up to it.
