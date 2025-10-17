@@ -31,6 +31,7 @@ const GameBoard = (props) => {
                     const nextHead = props.snake[1]
                     let headStyle = ""
                     let tailStyle = ""
+                    let snakeStyle = ""
                     if (props.snake.length > 1) {
                         // tail styles
                         if (preTail.x < tail.x)
@@ -51,6 +52,8 @@ const GameBoard = (props) => {
                             headStyle = "head-bottomleft-bottomright"
                         else if (nextHead.y > head.y)
                             headStyle = "head-topleft-topright"
+                    } else {
+                        snakeStyle = "less-heads-tails"
                     }
 
                     // we do the same thing for the food, matching the coordinates in the grid to the ones in the food object, but we don't need .some this time because the food is only ever one cell.
@@ -66,6 +69,7 @@ const GameBoard = (props) => {
                                     isSnake && "bg-primary border-primary-dark",
                                     isSnake && isHead && "relative bg-surface border-surface-light snake-head " + headStyle,
                                     isSnake && isTail && "relative bg-surface border-surface-light snake-tail " + tailStyle,
+                                    isSnake && props.snake.length === 1 && "relative bg-surface border-surface-light snake-tail " + snakeStyle,
                                     isFood && "relative food-cell bg-surface border-surface-light",
                                     !isSnake && !isFood && "bg-surface border-surface-light",
                                 ]
