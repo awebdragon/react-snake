@@ -170,7 +170,7 @@ function App() {
 
 			return () => clearInterval(interval) // cleanup
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [running, direction, gridSize])
+	}, [running, direction, gridSize, food])
 
 	// add a listener for key presses
 	useEffect(() => {
