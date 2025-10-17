@@ -19,20 +19,23 @@ const Sidebar = (props) => {
                 <p><span className="text-secondary-light">Spacebar</span>: Pause</p>
             </div>
 
-            {!props.gameOver && <div className="mt-2 flex flex-col justify-center items-center">
-                <button
-                    onClick={props.handlePause}
-                    className="button button--primary"
-                >
-                    {props.running ? "Pause" : "Start"}
-                </button>
-                <button
-                    onClick={props.handleReset}
-                    className="button button--secondary"
-                >
-                    Reset
-                </button>
-            </div>}
+            {props.mode === "manual" && (
+                !props.gameOver && <div className="mt-2 flex flex-col justify-center items-center">
+                    <button
+                        onClick={props.handlePause}
+                        className="button button--primary"
+                    >
+                        {props.running ? "Pause" : "Start"}
+                    </button>
+                    <button
+                        onClick={props.handleReset}
+                        className="button button--secondary"
+                    >
+                        Reset
+                    </button>
+                </div>
+            )}
+            
         </div>
     )
 }

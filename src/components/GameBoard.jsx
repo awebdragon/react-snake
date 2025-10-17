@@ -84,7 +84,7 @@ const GameBoard = (props) => {
                     <div className="absolute inset-0 w-full h-full flex flex-col justify-center items-center bg-black/80 z-10">
                         <h2 className="font-bold mb-6">Game Over</h2>
                         <button
-                            onClick={props.handleGameOverReset}
+                            onClick={props.handleReset}
                             className="button button--secondary text-lg"
                         >
                             Restart
