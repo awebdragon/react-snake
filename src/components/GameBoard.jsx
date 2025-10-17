@@ -83,9 +83,6 @@ const GameBoard = (props) => {
                 {props.gameOver && (
                     <div className="absolute inset-0 w-full h-full flex flex-col justify-center items-center bg-black/80 z-10">
                         <h2 className="font-bold mb-6">Game Over</h2>
-                        <span className="mb-4 text-2xl text-red-500 font-semibold">
-                            Final Score: {props.score}
-                        </span>
                         <button
                             onClick={props.handleGameOverReset}
                             className="button button--secondary text-lg"

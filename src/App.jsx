@@ -204,7 +204,7 @@ function App() {
 				<img src={snakeLogo} className="logo snake" alt="Snake logo" />
 			</header>
 			
-			<main className="w-xs sm:w-xl md:w-2xl mx-auto flex flex-col md:flex-row items-center justify-center gap-4">
+			<main className="w-xs sm:w-xl md:w-2xl lg:w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-4 lg:gap-6">
 				<Sidebar 
 					score={score}
 					gameOver={gameOver}

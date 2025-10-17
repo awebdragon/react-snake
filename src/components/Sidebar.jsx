@@ -1,10 +1,10 @@
 const Sidebar = (props) => {
 
     return (
-        <div className="sidebar py-2 px-4 bg-surface border border-surface-light rounded-sm">
+        <div className="sidebar pt-4 pb-2 px-6 bg-surface border border-surface-light rounded-sm">
             <div className="text-center mb-3 md:mb-6">
                 {props.gameOver ? (
-                    <span className="ml-4 text-2xl text-red-500 font-semibold">
+                    <span className="text-2xl text-red-500 font-semibold">
                         Final Score: {props.score}
                     </span>
                 ) : (
