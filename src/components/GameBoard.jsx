@@ -1,4 +1,6 @@
 const GameBoard = (props) => {
+    // don't render until we have data
+    if (!props.snake?.length || !props.food) return null;
 
     // build array of all the cells' positions
     const cells = Array.from(
@@ -92,6 +94,14 @@ const GameBoard = (props) => {
                     </div>
                 )}
             </div>
+            <div aria-live="polite" className="sr-only">
+                {props.gameOver
+                        ? `Game over. Final score: ${props.score}. Final snake length: ${props.snake.length}`
+                        : props.running
+                        ? `Running. Score: ${props.score}. Snake length: ${props.snake.length}`
+                        : "Paused"
+                }
+			</div>
         </>
     )
 }

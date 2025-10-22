@@ -3,21 +3,18 @@ import snakeLogo from '/favicon.ico'
 
 import { useState, useEffect, useRef } from "react"
 
-// hooks
-import useSnakeGame from "./hooks/useSnakeGame"
-import useKeyboardControls from "./hooks/useKeyboardControls"
-
 // components
-import GameBoard from "./components/GameBoard"
 import Sidebar from "./components/Sidebar"
+import ManualSnakeGame from "./components/ManualSnakeGame"
+import AutoSnakeGame from "./components/AutoSnakeGame"
 
 function App() {
 
 	const [gridSize, setGridSize] = useState(null)
-	const [cellSize, setCellSize] = useState(null)
 	const [cellStyles, setCellStyles] = useState({})
-
-	const [mode] = useState("manual"); // "manual" | "self-playing"
+	const [mode, setMode] = useState("auto") // "manual" | "auto"
+	const [isChecked, setIsChecked] = useState(false)
+  const [gameAPI, setGameAPI] = useState({})
 
 	const containerRef = useRef()
 
@@ -33,10 +30,12 @@ function App() {
 				Math.floor(containerWidth / maxCells)
 			)
 
-			const clampGridSize = Math.floor(containerWidth / clampCellSize)
+			let clampGridSize = Math.floor(containerWidth / clampCellSize);
+
+			//  Ensure even number of cells (for Hamiltonian path closure)
+			if (clampGridSize % 2 !== 0) clampGridSize -= 1;
 
 			setGridSize(clampGridSize)
-			setCellSize(clampCellSize)
 			setCellStyles({
 				aspectRatio: "1 / 1",
 				width: `${containerWidth}px`,
@@ -44,64 +43,16 @@ function App() {
 				gridTemplateColumns: `repeat(${clampGridSize}, 1fr)`,
 				gridTemplateRows: `repeat(${clampGridSize}, 1fr)`,
 			})
-		};
-		calculateGrid()
-	}, []);
-
-	// using imported hooks/utils
-	const {
-    snake,
-    setSnake,
-    food,
-    setFood,
-    // eslint-disable-next-line no-unused-vars
-    direction,
-    setDirection,
-    running,
-    setRunning,
-    gameOver,
-    setGameOver,
-    score,
-    setScore,
-    inputLocked,
-    setInputLocked,
-  } = useSnakeGame(gridSize)
-
-	// now that we've calculated the grid, we can implement a function that centers (roughly) the snake on the grid, and randomizes the food starting point.
-	useEffect(() => {
-		if (gridSize) {
-			// center the snake on the grid
-			const center = Math.floor(gridSize / 2)
-			setSnake([{ x: center, y: center }])
-
-			// give the food a random starting cell
-			setFood({
-				x: Math.floor(Math.random() * gridSize),
-				y: Math.floor(Math.random() * gridSize),
-			})
 		}
-	}, [gridSize])
+		calculateGrid()
+	}, [])
 
-	// Allow keyboard controls, prevent snake from moving backwards into itself
-	useKeyboardControls({
-		running,
-		setRunning,
-		inputLocked,
-		setInputLocked,
-		setDirection,
-	});
-
-	const handleReset = () => {
-		setGameOver(false)
-		setRunning(false)
-		setSnake([{ x: 10, y: 10 }])
-		setDirection({ x: 1, y: 0 })
-		setFood({ x: 14, y: 10 })
-		setScore(0)
-	}
-	const handlePause = () => {
-		setRunning((prevRunning) => !prevRunning)
-	}
+	// mode toggle logic
+	const handleToggle = () => {
+    setIsChecked(prev => !prev)
+    setMode(prev => (prev === "manual" ? "auto" : "manual"))
+    gameAPI.handleReset?.() // reset when toggling
+  }
 
 	return (
 		<div>
@@ -111,39 +62,35 @@ function App() {
 			</header>
 			
 			<main className="w-xs sm:w-xl md:w-2xl lg:w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-4 lg:gap-6">
-				<Sidebar 
-					mode={mode}
-					score={score}
-					gameOver={gameOver}
-					running={running}
-					handlePause={handlePause}
-					handleReset={handleReset}
-				/>
+				<Sidebar
+          mode={mode}
+          isChecked={isChecked}
+          handleToggle={handleToggle}
+          running={gameAPI.running}
+          handlePause={gameAPI.handlePause}
+          handleReset={gameAPI.handleReset}
+          score={gameAPI.score}
+          gameOver={gameAPI.gameOver}
+        />
+			
 				<div ref={containerRef} className='w-full md:w-8/12 mx-auto flex flex-row gap-2 items-center justify-center'>
-					{gridSize && cellSize && (
-						<GameBoard
-							gridSize={gridSize}
-							cellStyles={cellStyles}
-							snake={snake}
-							food={food}
-							gameOver={gameOver}
-							score={score}
-							handleReset={handleReset}
-						/>
-					)}
+					{gridSize && (
+            mode === "manual" ? (
+              <ManualSnakeGame
+                gridSize={gridSize}
+                cellStyles={cellStyles}
+                exposeAPI={setGameAPI}
+              />
+            ) : (
+              <AutoSnakeGame
+                gridSize={gridSize}
+                cellStyles={cellStyles}
+                exposeAPI={setGameAPI}
+              />
+            )
+          )}
 				</div>
 			</main>
-
-			
-			<div aria-live="polite" className="sr-only">
-					{gameOver
-							? `Game over. Final score: ${score}. Final snake length: ${snake.length}`
-							: running
-							? `Running. Score: ${score}. Snake length: ${snake.length}`
-							: "Paused"
-					}
-			</div>
-			
 		</div>
 	)
 }

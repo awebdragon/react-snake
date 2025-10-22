@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getNewFood } from "../utils/gameUtils";
 
-export default function useSnakeGame(gridSize) {
+export default function useSnakeGame(gridSize, enabled = true) {
     const [snake, setSnake] = useState([{x: 10, y: 10}])
     const [food, setFood] = useState({ x: 14, y: 10 })
   
@@ -26,7 +26,7 @@ export default function useSnakeGame(gridSize) {
 
     // making the snake move
     useEffect(() => {
-        if (!running || !gridSize) return
+        if (!enabled || !running || !gridSize) return
 
         const interval = setInterval(() => {
             setSnake((prevSnake) => {
