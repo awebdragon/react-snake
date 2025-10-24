@@ -66,7 +66,7 @@ export default function useSnakeGame(gridSize, enabled = true) {
 
                 return newSnake
             })
-        }, 175) // ms per interval
+        }, 175) // ms per interval, 175 default
 
         return () => clearInterval(interval) // cleanup
     // eslint-disable-next-line react-hooks/exhaustive-deps

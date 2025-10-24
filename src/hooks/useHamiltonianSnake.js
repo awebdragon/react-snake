@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
-import { generateHamiltonianCycle } from "../utils/hamiltonian"
+import { generateStaticPath } from "../utils/hamiltonian"
 import { getNewFood } from "../utils/gameUtils"
 
 export default function useHamiltonianSnake(gridSize, enabled = true) {
+  const path = generateStaticPath();
+  
   // all our manual setup
   const [snake, setSnake] = useState([{ x: 0, y: 0 }])
   const [food, setFood] = useState({ x: 1, y: 0 })
@@ -11,18 +13,7 @@ export default function useHamiltonianSnake(gridSize, enabled = true) {
   const [score, setScore] = useState(0)
 
   // plus some new ones to help us set up a self-playing version
-  const [path, setPath] = useState([])
   const [index, setIndex] = useState(0)
-
-  // track progress through the grid
-  useEffect(() => {
-    if (gridSize) {
-      const newPath = generateHamiltonianCycle(gridSize)
-      setPath(newPath)
-      setSnake([newPath[0]])
-      setFood(getNewFood([newPath[0]], gridSize))
-    }
-  }, [gridSize])
 
   // keep all the same functionality, except now we need to track the path index
   useEffect(() => {
@@ -49,9 +40,22 @@ export default function useHamiltonianSnake(gridSize, enabled = true) {
           newSnake.pop()
         }
 
+        // reintroduce game over state, for when the snake fills the whole screen or runs into itself during shortcutting
+        const hitSelf = newSnake
+        .slice(1) // ignore the head
+        .some(seg => seg.x === newHead.x && seg.y === newHead.y);
+
+        if (hitSelf) {
+          setRunning(false)
+          setGameOver(true)
+          return prevSnake
+        }
+
         return newSnake
       })
-    }, 175)
+
+      
+    }, 100) // interval sets the speed, 175 is the default for manual, but the auto player should be faster so that there's less wait time
 
     return () => clearInterval(interval)
   }, [running, path, index, food, gridSize])

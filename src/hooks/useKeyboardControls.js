@@ -8,6 +8,10 @@ export default function useKeyboardControls({
   setDirection,
 }){
   const handleKeyDown = useCallback((event) => { // a normal callback function - that is, a function that we set to be called *later*, like after a timeout or something else runs - will get rebuilt every render. We basically tell React "there's no need to rebuild this unless the dependencies updated, because the function is still behaving the same way". Re-building the function may not have much of an impact on our little snake app, but in large/complex apps and in cases where renders are happening often - even ours renders every couple hundred milliseconds, so pretty often compared to a typical webpage - it can be a big hit on performance. If our app gets complex enough, we may even start seeing input delays. We want to tell React "hey, this function hasn't changed, don't rebuild it each time the component updates" to save on that performance.
+			const active = document.activeElement
+			const isInput = ["INPUT", "BUTTON", "TEXTAREA"].includes(active.tagName)
+			if (isInput) return // allow standard keyboard controls when the toggle is in focus
+
 			const key = event.key.toLowerCase()
 			if (["arrowup", "arrowdown", "arrowleft", "arrowright", "w", "a", "s", "d", " "].includes(key)) {
 					event.preventDefault()

@@ -1,23 +1,45 @@
-// the not-so-AI intelligence of the self-playing snake
-export const generateHamiltonianCycle = (gridSize) => {
-  const path = [];
+// the not-so-AI of the self-playing snake
+// This one's a little more manually built, based on a hamiltonian circuit but it doesn't have to be generated during run-time, allowing us to make it into a fancy maze-like path that should be super fun to watch.
+export const STATIC_HAMILTONIAN_20x20 = [
+  {x:7,y:10}, {x:7,y:9}, {x:8,y:9}, {x:8,y:10}, {x:9,y:10}, {x:9,y:9}, {x:9,y:8}, {x:8,y:8}, {x:7,y:8}, {x:7,y:7}, {x:7,y:6}, {x:8,y:6}, {x:8,y:7}, {x:9,y:7}, {x:10,y:7}, {x:11,y:7}, {x:11,y:8}, {x:10,y:8}, {x:10,y:9}, {x:10,y:10}, {x:10,y:11}, {x:11,y:11}, {x:11,y:10}, {x:11,y:9}, {x:12,y:9}, {x:12,y:10}, {x:13,y:10}, {x:13,y:9}, {x:14,y:9}, {x:14,y:10}, {x:14,y:11}, {x:13,y:11}, {x:12,y:11}, {x:12,y:12}, {x:11,y:12}, {x:10,y:12}, {x:9,y:12}, {x:9,y:11}, {x:8,y:11}, {x:8,y:12}, {x:8,y:13}, {x:9,y:13}, {x:9,y:14}, {x:8,y:14}, {x:7,y:14}, {x:6,y:14}, {x:6,y:15}, {x:5,y:15}, {x:4,y:15}, {x:4,y:16}, {x:5,y:16}, {x:6,y:16}, {x:7,y:16}, {x:7,y:15}, {x:8,y:15}, {x:8,y:16}, {x:9,y:16}, {x:9,y:15}, {x:10,y:15}, {x:10,y:14}, {x:10,y:13}, {x:11,y:13}, {x:12,y:13}, {x:12,y:14}, {x:11,y:14}, {x:11,y:15}, {x:12,y:15}, {x:12,y:16}, {x:11,y:16}, {x:10,y:16}, {x:10,y:17}, {x:11,y:17}, {x:11,y:18}, {x:11,y:19}, {x:12,y:19}, {x:12,y:18}, {x:12,y:17}, {x:13,y:17}, {x:13,y:16}, {x:14,y:16}, {x:14,y:17}, {x:14,y:18}, {x:13,y:18}, {x:13,y:19}, {x:14,y:19}, {x:15,y:19}, {x:15,y:18}, {x:16,y:18}, {x:16,y:19}, {x:17,y:19}, {x:18,y:19}, {x:19,y:19}, {x:19,y:18}, {x:18,y:18}, {x:17,y:18}, {x:17,y:17}, {x:16,y:17}, {x:15,y:17}, {x:15,y:16}, {x:15,y:15}, {x:14,y:15}, {x:13,y:15}, {x:13,y:14}, {x:13,y:13}, {x:13,y:12}, {x:14,y:12}, {x:15,y:12}, {x:15,y:11}, {x:15,y:10}, {x:15,y:9}, {x:15,y:8}, {x:16,y:8}, {x:16,y:9}, {x:16,y:10}, {x:16,y:11}, {x:16,y:12}, {x:17,y:12}, {x:18,y:12}, {x:18,y:13}, {x:18,y:14}, {x:17,y:14}, {x:17,y:13}, {x:16,y:13}, {x:15,y:13}, {x:14,y:13}, {x:14,y:14}, {x:15,y:14}, {x:16,y:14}, {x:16,y:15}, {x:16,y:16}, {x:17,y:16}, {x:17,y:15}, {x:18,y:15}, {x:18,y:16}, {x:18,y:17}, {x:19,y:17}, {x:19,y:16}, {x:19,y:15}, {x:19,y:14}, {x:19,y:13}, {x:19,y:12}, {x:19,y:11}, {x:18,y:11}, {x:17,y:11}, {x:17,y:10}, {x:17,y:9}, {x:18,y:9}, {x:18,y:10}, {x:19,y:10}, {x:19,y:9}, {x:19,y:8}, {x:19,y:7}, {x:19,y:6}, {x:18,y:6}, {x:18,y:7}, {x:18,y:8}, {x:17,y:8}, {x:17,y:7}, {x:17,y:6}, {x:17,y:5}, {x:18,y:5}, {x:19,y:5}, {x:19,y:4}, {x:18,y:4}, {x:17,y:4}, {x:17,y:3}, {x:18,y:3}, {x:19,y:3}, {x:19,y:2}, {x:18,y:2}, {x:17,y:2}, {x:17,y:1}, {x:18,y:1}, {x:19,y:1}, {x:19,y:0}, {x:18,y:0}, {x:17,y:0}, {x:16,y:0}, {x:16,y:1}, {x:16,y:2}, {x:16,y:3}, {x:15,y:3}, {x:15,y:2}, {x:14,y:2}, {x:14,y:1}, {x:15,y:1}, {x:15,y:0}, {x:14,y:0}, {x:13,y:0}, {x:12,y:0}, {x:11,y:0}, {x:10,y:0}, {x:10,y:1}, {x:11,y:1}, {x:12,y:1}, {x:13,y:1}, {x:13,y:2}, {x:13,y:3}, {x:14,y:3}, {x:14,y:4}, {x:15,y:4}, {x:16,y:4}, {x:16,y:5}, {x:15,y:5}, {x:14,y:5}, {x:14,y:6}, {x:15,y:6}, {x:16,y:6}, {x:16,y:7}, {x:15,y:7}, {x:14,y:7}, {x:14,y:8}, {x:13,y:8}, {x:12,y:8}, {x:12,y:7}, {x:13,y:7}, {x:13,y:6}, {x:13,y:5}, {x:13,y:4}, {x:12,y:4}, {x:12,y:5}, {x:12,y:6}, {x:11,y:6}, {x:11,y:5}, {x:11,y:4}, {x:11,y:3}, {x:12,y:3}, {x:12,y:2}, {x:11,y:2}, {x:10,y:2}, {x:10,y:3}, {x:10,y:4}, {x:10,y:5}, {x:10,y:6}, {x:9,y:6}, {x:9,y:5}, {x:8,y:5}, {x:7,y:5}, {x:7,y:4}, {x:8,y:4}, {x:9,y:4}, {x:9,y:3}, {x:9,y:2}, {x:9,y:1}, {x:9,y:0}, {x:8,y:0}, {x:8,y:1}, {x:7,y:1}, {x:7,y:0}, {x:6,y:0}, {x:5,y:0}, {x:4,y:0}, {x:4,y:1}, {x:4,y:2}, {x:4,y:3}, {x:5,y:3}, {x:5,y:2}, {x:5,y:1}, {x:6,y:1}, {x:6,y:2}, {x:7,y:2}, {x:8,y:2}, {x:8,y:3}, {x:7,y:3}, {x:6,y:3}, {x:6,y:4}, {x:6,y:5}, {x:6,y:6}, {x:6,y:7}, {x:6,y:8}, {x:6,y:9}, {x:6,y:10}, {x:6,y:11}, {x:5,y:11}, {x:5,y:10}, {x:5,y:9}, {x:5,y:8}, {x:4,y:8}, {x:3,y:8}, {x:3,y:7}, {x:4,y:7}, {x:5,y:7}, {x:5,y:6}, {x:4,y:6}, {x:4,y:5}, {x:5,y:5}, {x:5,y:4}, {x:4,y:4}, {x:3,y:4}, {x:3,y:5}, {x:3,y:6}, {x:2,y:6}, {x:1,y:6}, {x:1,y:5}, {x:2,y:5}, {x:2,y:4}, {x:2,y:3}, {x:3,y:3}, {x:3,y:2}, {x:3,y:1}, {x:3,y:0}, {x:2,y:0}, {x:1,y:0}, {x:0,y:0}, {x:0,y:1}, {x:1,y:1}, {x:2,y:1}, {x:2,y:2}, {x:1,y:2}, {x:0,y:2}, {x:0,y:3}, {x:1,y:3}, {x:1,y:4}, {x:0,y:4}, {x:0,y:5}, {x:0,y:6}, {x:0,y:7}, {x:0,y:8}, {x:0,y:9}, {x:1,y:9}, {x:1,y:8}, {x:1,y:7}, {x:2,y:7}, {x:2,y:8}, {x:2,y:9}, {x:3,y:9}, {x:4,y:9}, {x:4,y:10}, {x:3,y:10}, {x:2,y:10}, {x:1,y:10}, {x:0,y:10}, {x:0,y:11}, {x:1,y:11}, {x:2,y:11}, {x:2,y:12}, {x:1,y:12}, {x:0,y:12}, {x:0,y:13}, {x:0,y:14}, {x:0,y:15}, {x:1,y:15}, {x:1,y:14}, {x:1,y:13}, {x:2,y:13}, {x:2,y:14}, {x:2,y:15}, {x:2,y:16}, {x:2,y:17}, {x:1,y:17}, {x:1,y:16}, {x:0,y:16}, {x:0,y:17}, {x:0,y:18}, {x:0,y:19}, {x:1,y:19}, {x:1,y:18}, {x:2,y:18}, {x:2,y:19}, {x:3,y:19}, {x:3,y:18}, {x:4,y:18}, {x:4,y:19}, {x:5,y:19}, {x:5,y:18}, {x:6,y:18}, {x:6,y:19}, {x:7,y:19}, {x:7,y:18}, {x:8,y:18}, {x:8,y:19}, {x:9,y:19}, {x:10,y:19}, {x:10,y:18}, {x:9,y:18}, {x:9,y:17}, {x:8,y:17}, {x:7,y:17}, {x:6,y:17}, {x:5,y:17}, {x:4,y:17}, {x:3,y:17}, {x:3,y:16}, {x:3,y:15}, {x:3,y:14}, {x:3,y:13}, {x:3,y:12}, {x:3,y:11}, {x:4,y:11}, {x:4,y:12}, {x:4,y:13}, {x:4,y:14}, {x:5,y:14}, {x:5,y:13}, {x:5,y:12}, {x:6,y:12}, {x:6,y:13}, {x:7,y:13}, {x:7,y:12}, {x:7,y:11}
+];
+export function generateStaticPath() {
+  return STATIC_HAMILTONIAN_20x20;
+}
 
-  for (let y = 0; y < gridSize; y++) {
-    if (y % 2 === 0) {
-      // left-to-right on even rows
-      for (let x = 0; x < gridSize; x++) {
-        path.push({ x, y });
-      }
-    } else {
-      // right-to-left on odd rows
-      for (let x = gridSize - 1; x >= 0; x--) {
-        path.push({ x, y });
-      }
-    }
-  }
+// a working, but rather boring, hamiltonian circuit that can be used with responsive grids. Moved away from this in order to create a more dynamic maze look and feel without sending the poor CPU into the pits of fiery death trying to generate a path that stayed inside the bounds of the grid, touch every cell only exactly once, and ending in a cell directly neighboring the starting cell.
+// export function generateHamiltonianCycle(size) {
+//   // Assumes size is even (you already enforce this).
+//   const path = [];
 
-  // close the loop: return to starting cell
-  path.push(path[0]);
+//   // 1) Start at (0,0).
+//   path.push({ x: 0, y: 0 });
 
-  return path;
-};
+//   // 2) Cover the top row from x=1 → x=size-1.
+//   for (let x = 1; x < size; x++) {
+//     path.push({ x, y: 0 });
+//   }
+
+//   // 3) Serpentine over rows 1..size-1 but ONLY through columns 1..size-1.
+//   //    We intentionally skip column 0 here, saving it for the final climb.
+//   for (let y = 1; y < size; y++) {
+//     if (y % 2 === 1) {
+//       // odd row: right → left, stop at x=1 (do NOT enter x=0)
+//       for (let x = size - 1; x >= 1; x--) {
+//         path.push({ x, y });
+//       }
+//     } else {
+//       // even row (>0): left → right, start at x=1
+//       for (let x = 1; x < size; x++) {
+//         path.push({ x, y });
+//       }
+//     }
+//   }
+
+//   // 4) Now climb up column 0 from bottom → y=1 (we've never visited these yet).
+//   for (let y = size - 1; y >= 1; y--) {
+//     path.push({ x: 0, y });
+//   }
+
+//   return path;
+// }
