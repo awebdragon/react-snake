@@ -1,3 +1,5 @@
+import makeSnakeColors from "../utils/snakeColorUtil"
+
 const GameBoard = (props) => {
     // don't render until we have data
     if (!props.snake?.length || !props.food) return null;
@@ -12,6 +14,9 @@ const GameBoard = (props) => {
             // To be honest, I don't have a head for math, so even after walking through to try to understand it I'm still a little lost. Glad other people are math nerds and figure this stuff out for the rest of us!
         })
     )
+
+    // build gradient colors for current snake
+    const colors = makeSnakeColors("#5E8D44", "#99C57F", props.snake.length);
 
     return (
         <>
@@ -31,6 +36,7 @@ const GameBoard = (props) => {
                     const isTail = tail.x === cell.x && tail.y === cell.y
                     const preTail = props.snake[props.snake.length - 2]
                     const nextHead = props.snake[1]
+
                     let headStyle = ""
                     let tailStyle = ""
                     let snakeStyle = ""
@@ -58,6 +64,15 @@ const GameBoard = (props) => {
                         snakeStyle = "less-heads-tails"
                     }
 
+                    let colorVar = null;
+                    if (isSnake) {
+                    // find which segment this cell represents
+                    const segIndex = props.snake.findIndex(
+                        seg => seg.x === cell.x && seg.y === cell.y
+                    );
+                        colorVar = colors[segIndex];
+                    }
+
                     // we do the same thing for the food, matching the coordinates in the grid to the ones in the food object, but we don't need .some this time because the food is only ever one cell.
                     const isFood = props.food.x === cell.x && props.food.y === cell.y
     
@@ -68,16 +83,21 @@ const GameBoard = (props) => {
                             className={
                                 [
                                     "w-full h-full box-border border",
-                                    isSnake && "bg-primary border-primary-dark",
-                                    isSnake && isHead && "relative bg-surface border-surface-light snake-head " + headStyle,
-                                    isSnake && isTail && "relative bg-surface border-surface-light snake-tail " + tailStyle,
-                                    isSnake && props.snake.length === 1 && "relative bg-surface border-surface-light snake-tail " + snakeStyle,
-                                    isFood && "relative food-cell bg-surface border-surface-light",
+                                    isSnake && "border-primary-darkest",
+                                    isHead && "relative snake-head " + headStyle,
+                                    isTail && "relative snake-tail " + tailStyle,
+                                    isSnake && props.snake.length === 1 && "relative snake-tail " + snakeStyle,
+                                    isFood && "relative food-cell border-surface-light",
                                     !isSnake && !isFood && "bg-surface border-surface-light",
                                 ]
                                 .filter(Boolean)
                                 .join(" ")
                             } // we have some conditional JS logic in our className, so we need to use .filter to check for which conditions are true followed by .join to put them all together in a string so that Tailwind and our CSS can do its magic on the correct classes.
+                            style={{
+                                backgroundColor:
+                                isSnake && !isHead && !isTail ? colorVar : "inherit",
+                                "--snake-color": colorVar, // pseudo-elements will use this
+                            }} // attempting to give the snake a nice gradient
                         />
                     )
                 }) }
