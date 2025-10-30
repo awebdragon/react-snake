@@ -1,11 +1,71 @@
-# React Snake
-
-My first ever React project, straight out of training! Practicing the fundamentals, getting a little Tailwind practice in for good measure, and making a little green snake move across the screen and grow as she eats.
+My first ever React project, straight out of training! Practicing the fundamentals, getting a little Tailwind practice in for good measure, and making a little green snake move across the screen and grow as she eats. It was also a chance to dive into coding with AI, since I sure didn't want to do any of this math myself.
 
 [Take a look](awebdragon.github.io/react-snake/) - and feel free to go through the files, too. Beware of self-learner / nerdy comments.
 
-Current progress: the game loop is completed for the player-controlled version. I'll be keeping this version as a fallback, but the whole point of this project was to get the snake playing _herself_.
+# 🐍 Self-Playing Snake
 
-Next steps: clean up the main App so that game logic and other utilities are separated into other files. This is a preparation step for creating the default self-playing game mode.
+This started as a “learn React by building something fun” project… and then got wildly out of hand.
 
-Far future upgrades: learning typescript and getting it integrated - just as an excuse to learn more. Maybe mobile controls if I'm feeling up to it.
+I was inspired by another developer who made a snake game and tried to teach a neural learning AI how to play it, before scrapping that and deciding to create a Hamiltonian circuit with built in shortcutting. I don't know exactly what he coded, but I decided to give it a try in React - it gave me a perfect set of pre-made boundaries and goals to hit.
+
+This Snake clone grew fangs, discovered mathematics, and now navigates a Hamiltonian circuit all by itself. With only the ocassional tail-biting.
+
+There's also a manual mode if you aren't as fascinated watching the snake zoom herself around as I am.
+
+## Features
+
+Two game modes
+
+Manual mode: traditional keyboard-controlled Snake (WASD / Arrow keys).
+
+Auto mode: a self-playing version that follows a handcrafted Hamiltonian path across a 20×20 grid.
+It’s disciplined enough not to eat itself, but still takes clever shortcuts when it’s safe.
+
+Responsive layout — the board scales smoothly with screen width.
+
+Pause, reset, and mode toggle controls.
+
+Custom color theming (Tailwind + CSS variables).
+
+Snake body gradient that dynamically adjusts length and color for easier visual tracking.
+
+Accessible labels and focus states (screen-reader friendly).
+
+## Tech Stack
+
+React 18 + Vite
+
+Custom Hooks for game logic (useSnakeGame, useHamiltonianSnake)
+
+Tailwind for some light styling (and a couple JS and pseudo-element tricks for some light-but-not-so-simple styling)
+
+Vanilla JavaScript math for grid logic and pathfinding
+
+## What’s Going On Under the Hood
+
+The autoplayer uses a pre-computed Hamiltonian circuit — a path that visits every cell on the grid exactly once — to (kind of) guarantee that it can fill the board without collisions (most of the time).
+Early on, when the snake is small, it breaks from the path to take “safe” shortcuts toward food. The hamiltonian circuit isn't used, but is still tracking the snake's head position to prepare for transitioning back onto the predestined path.
+As it grows, it transitions into full Hamiltonian mode for survival, with increasingly smaller corner-cutting allowance, until there's no corner-cutting at all.
+
+The result is a snake that behaves almost like it’s thinking… but it’s really just math and careful state updates.
+
+## Design Notes
+
+The gradient body isn’t just pretty; it makes the snake’s movement easier to follow.
+
+Head and tail colors are passed to CSS via custom properties, so pseudo-elements render rounded ends with matching hues.
+
+The palette is built around my project’s primary green (#77B255), the rest of the palette is based on a split complementary (#9E5CBF, #BF5C87), with adjusted variants for better readability and accessibility.
+
+## Why This Project Exists
+
+This project lives in my portfolio as a React fundamentals capstone — a playground for experimenting with state, effects, custom hooks, and logic separation, while keeping it fun and visual.
+It’s a bridge between my front-end experience and the software-engineering patterns I’m developing.
+
+## Future Ideas (maybe)
+
+Rework the manual mode for mobile controls.
+
+Add score persistence or local storage high scores.
+
+Alternate color themes.
