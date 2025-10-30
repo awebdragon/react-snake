@@ -41,7 +41,13 @@ export default function AutoSnakeGame({ gridSize, cellStyles, exposeAPI }) {
     })
     setDirection({ x: 1, y: 0 })
     setScore(0)
+    setRunning(true)
   }
+
+  // check for game over state
+  useEffect(() => {
+    if (gameOver) setRunning(false);
+  }, [gameOver]);
 
   // Expose public “API” to App
   useEffect(() => {
