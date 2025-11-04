@@ -8,7 +8,7 @@ This started as a “learn React by building something fun” project… and the
 
 I was inspired by another developer who made a snake game and tried to teach a neural learning AI how to play it, before scrapping that and deciding to create a Hamiltonian circuit with built in shortcutting. I don't know exactly what he coded, but I decided to give it a try in React - it gave me a perfect set of pre-made boundaries and goals to hit.
 
-This Snake clone grew fangs, discovered mathematics, and now navigates a Hamiltonian circuit all by itself. With only the ocassional tail-biting.
+This Snake navigates a Hamiltonian circuit all by itself. With only the ocassional tail-biting. Or you can toggle it to manual mode and play with keyboard controls.
 
 There's also a manual mode if you aren't as fascinated watching the snake zoom herself around as I am.
 
@@ -19,7 +19,7 @@ Two game modes
 Manual mode: traditional keyboard-controlled Snake (WASD / Arrow keys).
 
 Auto mode: a self-playing version that follows a handcrafted Hamiltonian path across a 20×20 grid.
-It’s disciplined enough not to eat itself, but still takes clever shortcuts when it’s safe.
+It’s disciplined enough not to eat itself (mostly), but still takes clever shortcuts when it’s safe, starting with a free-running mode and transitioning into the Hamiltonian circuit while looking a short way ahead for any shortcuts it can take and still get closer to the food, and eventually following the curcuit 1:1 perfectly, all based on the length of the snake.
 
 Responsive layout — the board scales smoothly with screen width.
 
@@ -47,7 +47,7 @@ The autoplayer uses a pre-computed Hamiltonian circuit — a path that visits ev
 Early on, when the snake is small, it breaks from the path to take “safe” shortcuts toward food. The hamiltonian circuit isn't used, but is still tracking the snake's head position to prepare for transitioning back onto the predestined path.
 As it grows, it transitions into full Hamiltonian mode for survival, with increasingly smaller corner-cutting allowance, until there's no corner-cutting at all.
 
-The result is a snake that behaves almost like it’s thinking… but it’s really just math and careful state updates.
+The result is a snake that behaves almost like it’s thinking… but it’s really just math.
 
 ## Design Notes
 
@@ -59,8 +59,7 @@ The palette is built around my project’s primary green (#77B255), the rest of 
 
 ## Why This Project Exists
 
-This project lives in my portfolio as a React fundamentals capstone — a playground for experimenting with state, effects, custom hooks, and logic separation, while keeping it fun and visual.
-It’s a bridge between my front-end experience and the software-engineering patterns I’m developing.
+This project lives in my portfolio as a React fundamentals capstone — a way to experiment with state, effects, custom hooks, and logic separation, while keeping it fun and visual, and keeping my interest by recreating a game.
 
 ## Future Ideas (maybe)
 
