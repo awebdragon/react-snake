@@ -3,7 +3,17 @@ import {useEffect} from "react"
 import GameBoard from "./GameBoard";
 import useHamiltonianSnake from "../hooks/useHamiltonianSnake";
 
-export default function AutoSnakeGame({ gridSize, cellStyles, exposeAPI }) {
+// for TS
+import type { GameAPI } from "../types"
+
+interface AutoSnakeGameProps {
+  gridSize: number
+  cellStyles: React.CSSProperties
+  exposeAPI?: (api: GameAPI) => void
+}
+
+/** AutoSnakeGame runs the self-playing Hamiltonian logic and reports its state to App via exposeAPI. */
+export default function AutoSnakeGame({ gridSize, cellStyles, exposeAPI }: AutoSnakeGameProps) {
   const {
     snake,
     setSnake,
@@ -52,13 +62,16 @@ export default function AutoSnakeGame({ gridSize, cellStyles, exposeAPI }) {
   // Expose public “API” to App
   useEffect(() => {
     if (!exposeAPI) return
-    exposeAPI({
+    
+    const api: GameAPI = {
       running,
       handlePause: () => setRunning(prev => !prev),
       handleReset,
       score,
       gameOver,
-    })
+    }
+
+    exposeAPI(api)
   }, [running, score, gameOver])
 
   return (

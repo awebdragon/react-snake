@@ -1,13 +1,58 @@
 import makeSnakeColors from "../utils/snakeColorUtil"
 
-const GameBoard = (props) => {
+interface Position {
+  x: number
+  y: number
+}
+/**
+ * We used "type" in Sidebar, and here we're using "interface"
+ * Both describe "shapes of data". Most times, they can be interchangeable. However.
+ * 
+ * Interfaces are open — you can extend or merge them.
+ * interface Position { x: number; y: number }
+ * interface Position { z?: number }
+ * result: { x: number; y: number; z?: number }
+ * Or:
+ * interface DrawablePosition extends Position { color: string }
+ * 
+ * type is more flexible mathematically.
+ * It can represent unions, intersections, tuples, primitive aliases, and more.
+ * 
+ * So type is like clay: you can mold complex forms and relationships between shapes.
+ * Interfaces, by contrast, are like blueprints: you can add rooms later, but the structure is fundamentally an object.
+ * 
+ * Use interface when:
+ * You’re describing the shape of an object, like component props or data models.
+ * You expect it might be extended later.
+ * You want to follow React’s ecosystem norms (props interfaces are common).
+ * 
+ * Use type when:
+ * You’re defining unions, tuples, or combining multiple shapes.
+ * You need literal types, utility types, or complex transformations.
+ * You want to represent specific value sets or composable logic types.
+ * 
+ * Editor note: I'll be honest, I can follow the English of what the AI who's helping me understand this is saying... but I think the understanding of which one to use and when is probably going to come down to practicing more with different kinds of data and practicing working with data more often.
+*/
+
+interface GameBoardProps {
+  gridSize: number
+  cellStyles: React.CSSProperties
+  snake: Position[]
+  food: Position
+  gameOver: boolean
+  score: number
+  running: boolean
+  handleReset: () => void
+}
+
+const GameBoard = (props: GameBoardProps) => {
     // don't render until we have data
     if (!props.snake?.length || !props.food) return null;
 
     // build array of all the cells' positions
     const cells = Array.from(
         {length: props.gridSize * props.gridSize}, // make an array with this many slots
-        (_, i) => ({ // and then fill it using this function. "_" is the current element value, which is undefined since we're only using length, so we use a throwaway variable name (so effectively, it’s like writing (ignored, i) or (unused, i)). "i" is the index, as usual.
+        (_, i): Position => ({ // and then fill it using this function. "_" is the current element value, which is undefined since we're only using length, so we use a throwaway variable name (so effectively, it’s like writing (ignored, i) or (unused, i)). "i" is the index, as usual. ": Position" is something we added between (_, i) and => for TypeScript - we're telling TS what kind of object we're building inside the map (we defined this at the top of the file)
             x: i % props.gridSize, // column number. Every time i reaches a multiple of the grid size, it resets to 0, starting over again on the left
             y: Math.floor(i / props.gridSize), // row number. Once you fill a whole row, the quotient goes up by 1
             // this is how to build a coordinate system using a flat list. Modulo (%) increments horizontally, while math.floor increments vertically.
@@ -16,7 +61,7 @@ const GameBoard = (props) => {
     )
 
     // build gradient colors for current snake
-    const colors = makeSnakeColors("#5E8D44", "#99C57F", props.snake.length);
+    const colors: string[] = makeSnakeColors("#5E8D44", "#99C57F", props.snake.length); // adding ": String" before the = to let TypeScript know we're expecting an array of strings specifically
 
     return (
         <>

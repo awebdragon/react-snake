@@ -2,14 +2,17 @@ import { useState, useEffect } from "react"
 import { generateStaticPath } from "../utils/hamiltonian"
 import { getNewFood } from "../utils/gameUtils"
 
+// import type keyword tells TS that you’re importing only types, not actual runtime values. It’s a small optimization and prevents circular dependencies.
+import type { Position, HamiltonianSnakeState } from "../types"
+
 // some helpers so that the snake can decide on shorter paths when it's not dangerous to do so (based on the length of the snake)
-function manhattan(a, b) {
+function manhattan(a:Position, b:Position): number {
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 
 // helper we use while the snake is small so it can move directly toward food without fear of eating herself
-function greedyCut(snake, food, gridSize) {
-  const head = snake[0];
+function greedyCut(snake:Position[], food:Position, gridSize:number): Position | null {
+  const head = snake[0]!;
   const directions = [
     { x: 0, y: -1 }, // up
     { x: 0, y: 1 },  // down
@@ -17,7 +20,7 @@ function greedyCut(snake, food, gridSize) {
     { x: 1, y: 0 },  // right
   ];
 
-  let bestMove = null;
+  let bestMove: Position | null = null;
   let bestScore = Infinity;
 
   for (const dir of directions) {
@@ -63,28 +66,28 @@ function greedyCut(snake, food, gridSize) {
   return bestMove;
 }
 
-export default function useHamiltonianSnake(gridSize, enabled = true) {
+export default function useHamiltonianSnake(gridSize:number, enabled:boolean = true): HamiltonianSnakeState {
   const path = generateStaticPath();
   
   // all our manual setup
-  const [snake, setSnake] = useState([{ x: 0, y: 0 }]);
-  const [food, setFood] = useState({ x: 1, y: 0 });
-  const [running, setRunning] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
+  const [snake, setSnake] = useState<Position[]>([{ x: 0, y: 0 }]);
+  const [food, setFood] = useState<Position>({ x: 1, y: 0 });
+  const [running, setRunning] = useState<boolean>(false);
+  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [score, setScore] = useState<number>(0);
 
   // plus some new ones to help us set up a self-playing version
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState<number>(0);
 
   // keep all the same functionality, except now we need to track the path index
   useEffect(() => {
     if (!enabled || !running || path.length === 0) return;
 
     const interval = setInterval(() => {
-      setSnake((prevSnake) => {
+      setSnake((prevSnake: Position[]) => {
         const totalCells = gridSize * gridSize;
         const ratio = prevSnake.length / totalCells;
-        const head = prevSnake[0];
+        const head = prevSnake[0]!;
 
         // --- 1️⃣ Free-Roam Mode (under 10% of board) ---
         if (ratio < 0.05) {
@@ -142,7 +145,7 @@ export default function useHamiltonianSnake(gridSize, enabled = true) {
         // Try to find a better move ahead
         for (let skip = 2; skip <= maxSkip; skip++) {
           const testIndex = (index + skip) % path.length;
-          const testCell = path[testIndex];
+          const testCell = path[testIndex]!;
           const dx = Math.abs(testCell.x - head.x);
           const dy = Math.abs(testCell.y - head.y);
           const isAdjacent = (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
@@ -217,9 +220,13 @@ export default function useHamiltonianSnake(gridSize, enabled = true) {
     setGameOver, 
     score,
     setScore,
-    direction: null,
+    direction: { x: 0, y: 0 }, // was null before TS
     setDirection: () => {},
     inputLocked: false,
-    setInputLocked: () => {}
+    setInputLocked: () => {},
+    path,
+    setPath: () => {}, // placeholder, since path is static
+    pathIndex: index,
+    setPathIndex: setIndex
   }
 }

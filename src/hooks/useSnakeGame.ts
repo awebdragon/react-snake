@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { getNewFood } from "../utils/gameUtils";
 
-export default function useSnakeGame(gridSize, enabled = true) {
-    const [snake, setSnake] = useState([{x: 10, y: 10}])
-    const [food, setFood] = useState({ x: 14, y: 10 })
+// for TS
+import type { Position, SnakeGameState } from "../types"
+
+export default function useSnakeGame(gridSize:number, enabled:boolean = true): SnakeGameState {
+    const [snake, setSnake] = useState<Position[]>([{x: 10, y: 10}]) // ts: we're expecting an array of Position, which is our object type we set above
+    const [food, setFood] = useState<Position>({ x: 14, y: 10 })
   
     // let's temporarily get the snake moving so we can test movement and movement-related functions, like what happens when she runs over a food square.
-    const [direction, setDirection] = useState({ x: 1, y: 0 }) // start moving right
-    const [running, setRunning] = useState(false)
+    const [direction, setDirection] = useState<Position>({ x: 1, y: 0 }) // start moving right
+    const [running, setRunning] = useState<boolean>(false)
     /**
      * {x:1, y:0} → right
      * {x:-1, y:0} → left
@@ -16,25 +19,27 @@ export default function useSnakeGame(gridSize, enabled = true) {
      */
   
     // we need to be able to commit the current direction until the next interval, to prevent rapid key presses from doubling-back the snake
-    const [inputLocked, setInputLocked] = useState(false)
+    const [inputLocked, setInputLocked] = useState<boolean>(false)
   
     // stop - game over time
-    const [gameOver, setGameOver] = useState(false)
+    const [gameOver, setGameOver] = useState<boolean>(false)
   
     // score tracking
-    const [score, setScore] = useState(0)
+    const [score, setScore] = useState<number>(0)
+    
+    /** for every variable declared above, we told TS what the expected type would be in <> brackets inside the value, since all of them are useStates */
 
     // making the snake move
     useEffect(() => {
         if (!enabled || !running || !gridSize) return
 
         const interval = setInterval(() => {
-            setSnake((prevSnake) => {
+            setSnake((prevSnake: Position[]) => {
                 setInputLocked(false) // allow new input for the next tick
 
-                const newHead = { // move the snake head per the direction
-                    x: (prevSnake[0].x + direction.x + gridSize) % gridSize,
-                    y: (prevSnake[0].y + direction.y + gridSize) % gridSize,
+                const newHead: Position = { // move the snake head per the direction
+                    x: (prevSnake[0]!.x + direction.x + gridSize) % gridSize, // TS: that ! is telling TS that we promise this isn't undefined; our array will always have at least one item in it because the snake always has a head
+                    y: (prevSnake[0]!.y + direction.y + gridSize) % gridSize,
                 }
 
                 // increase the snake length if she eats food
@@ -55,7 +60,7 @@ export default function useSnakeGame(gridSize, enabled = true) {
                   newSnake.pop()
                 } else {
                   setScore(prev => prev + 100)
-                  const freshFood = getNewFood(newSnake, gridSize)
+                  const freshFood: Position | null = getNewFood(newSnake, gridSize) // remember, | = union - we're saying the type can either be Position or null
 
                   if(freshFood) setFood(freshFood)
                   else{
@@ -69,7 +74,6 @@ export default function useSnakeGame(gridSize, enabled = true) {
         }, 175) // ms per interval, 175 default
 
         return () => clearInterval(interval) // cleanup
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [running, direction, gridSize, food])
 
     return {

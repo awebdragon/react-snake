@@ -1,6 +1,9 @@
+// TS
+import type { Position } from "../types"
+
 // food helper
-export const getNewFood = (snake, gridSize) => {
-  let newFood;
+export const getNewFood = (snake: Position[], gridSize: number): Position | null => {
+  let newFood:Position;
   let attempts = 0;
 
   do {

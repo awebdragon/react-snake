@@ -1,4 +1,31 @@
-const Sidebar = (props) => {
+// setting types and learning TypeScript
+type SidebarProps = {
+  gameOver: boolean
+  score: number
+  mode: "manual" | "auto" // this means mode is expecting one of two options, and no others are allowed even if they're also strings
+  isChecked: boolean
+  handleToggle: () => void
+  handlePause?: () => void // this ?: tells typescript that this prop is optional - we can only pause in one of the modes, so it isn't used in the other
+  handleReset: () => void
+  running?: boolean
+}
+
+// everything below can stay the same, because we aren't making edits to the rest of the logic - all our types this component is using are declared above. The only thing left to do is update line 15, const Sidebar = (props) => {
+
+const Sidebar = (props: SidebarProps) => {
+    // we could also destructure the above if we wanted, but I don't feel like that's necessary in this case, or maybe ever. This structure looks clean and readable to me. But, if you wanted to see what that would look like:
+    /**
+    const Sidebar = ({
+    gameOver,
+    score,
+    mode,
+    isChecked,
+    handleToggle,
+    handlePause,
+    handleReset,
+    running
+    }: SidebarProps) => {
+     */
 
     return (
         <div className="sidebar md:w-4/12 pt-4 pb-2 px-6 bg-surface border border-surface-light rounded-sm">
