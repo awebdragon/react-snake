@@ -48,7 +48,7 @@ export default function useKeyboardControls({
 
 			// lock input until next move tick
 			setInputLocked(true)
-	}, [inputLocked])
+	}, [inputLocked, setRunning, setDirection, setInputLocked])
 
   // add a listener for key presses
 	useEffect(() => {

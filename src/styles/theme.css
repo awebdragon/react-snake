@@ -25,6 +25,7 @@
 
     --color-background: #101512;
 
+    --color-surface-lighter: color-mix(in srgb, var(--color-surface) 70%, white);
     --color-surface-light: color-mix(in srgb, var(--color-surface) 85%, white);
     --color-surface: #1C211E;
     --color-surface-dark: color-mix(in srgb, var(--color-surface) 85%, black);

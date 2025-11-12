@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react"
 import makeSnakeColors from "../utils/snakeColorUtil"
 
 interface Position {
@@ -46,6 +47,14 @@ interface GameBoardProps {
 }
 
 const GameBoard = (props: GameBoardProps) => {
+    const boardRef = useRef<HTMLDivElement>(null) // telling this it's type is an HTML div element that can be null, and we want this ref because we need to move the focus onto the board whenever Running is true, an issue that arises when the user toggles the game mode or interacts with the start button
+    // focus automatically when game starts
+    useEffect(() => {
+        if (props.running && boardRef.current) {
+            boardRef.current.focus();
+        }
+    }, [props.running]);
+
     // don't render until we have data
     if (!props.snake?.length || !props.food) return null;
 
@@ -68,6 +77,8 @@ const GameBoard = (props: GameBoardProps) => {
             <div
                 className="relative grid border border-surface-light border-box bg-surface gap-0"
                 style={props.cellStyles}
+                ref={boardRef}
+                tabIndex={0}
             >
                 { cells.map((cell) => {
                     // first, we need to check whether any given cell is part of the snake's body

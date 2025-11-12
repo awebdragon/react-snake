@@ -1,3 +1,13 @@
+/* Now that the game board is focusable, it really doesn't need the same outline treatment as more common interactive elements - that focus state is just to allow players to immediately use keyboard controls, so we do want a visual indicator, but maybe more subtle*/
+.game-container > div.grid:focus{
+  /* Inner indicator */
+  outline: 3px var(--color-primary-darkest) solid;
+  outline-offset: 0;
+  
+  /* Outer indicator */
+  box-shadow: 0 0 0 5px var(--color-surface-lighter);
+}
+
 .food-cell::before{
     @apply rounded-full;
     content: "";

@@ -9,7 +9,7 @@ import type { Position, GameAPI } from "../types"
 interface ManualSnakeGameProps {
   gridSize: number
   cellStyles: React.CSSProperties
-  exposeAPI?: (api: GameAPI) => void // the ?:, remember, means that this prop is optional. The value is a function - a function that takes one argument named "api", which must be a GameAPI object, and it returns nothing (void). To put it another way: If you give me an exposeAPI prop, it needs to be a function that receives the game’s public API object, and doesn’t return a value I need to care about.
+  exposeAPI?: (api: GameAPI | null) => void // the ?:, remember, means that this prop is optional. The value is a function - a function that takes one argument named "api", which must be a GameAPI object, and it returns nothing (void). To put it another way: If you give me an exposeAPI prop, it needs to be a function that receives the game’s public API object, and doesn’t return a value I need to care about.
   // input ──▶ [GameAPI-shaped thing] ──▶ returns nothing
 
 }
@@ -96,6 +96,7 @@ export default function ManualSnakeGame({ gridSize, cellStyles, exposeAPI }: Man
     /**
      * builds a GameAPI object named "api" containing the game’s public methods and state, then calls exposeAPI(api) if that prop exists.
      */
+    return () => exposeAPI(null) // cleanup on unmount
   }, [running, score, gameOver])
 
   // 6️⃣ Render

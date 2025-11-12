@@ -9,7 +9,7 @@ import type { GameAPI } from "../types"
 interface AutoSnakeGameProps {
   gridSize: number
   cellStyles: React.CSSProperties
-  exposeAPI?: (api: GameAPI) => void
+  exposeAPI?: (api: GameAPI | null) => void // allow null for cleanup on mode change
 }
 
 /** AutoSnakeGame runs the self-playing Hamiltonian logic and reports its state to App via exposeAPI. */
@@ -72,6 +72,7 @@ export default function AutoSnakeGame({ gridSize, cellStyles, exposeAPI }: AutoS
     }
 
     exposeAPI(api)
+    return () => exposeAPI(null) // cleanup on unmount
   }, [running, score, gameOver])
 
   return (

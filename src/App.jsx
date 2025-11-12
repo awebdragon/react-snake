@@ -61,9 +61,9 @@ function App() {
 
 	// mode toggle logic
 	const handleToggle = () => {
+		setGameAPI({}) // reset when toggling
     setIsChecked(prev => !prev)
     setMode(prev => (prev === "manual" ? "auto" : "manual"))
-    gameAPI.handleReset?.() // reset when toggling
   }
 
 	return (
