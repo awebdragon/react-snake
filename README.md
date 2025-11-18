@@ -43,11 +43,17 @@ Vanilla JavaScript math for grid logic and pathfinding
 
 ## What’s Going On Under the Hood
 
-The autoplayer uses a pre-computed Hamiltonian circuit — a path that visits every cell on the grid exactly once — to (kind of) guarantee that it can fill the board without collisions (most of the time).
+Step 1: free mode. Completely free to chase the food, and completely free to run into her own tail.
+
+Step 2: "I'm about 5% of the length of the path now, so I'll loop-dee-loop myself to get into position to start Phase 2"
+
+Step 3: the autoplayer uses a pre-computed Hamiltonian circuit — a path that visits every cell on the grid exactly once — to (kind of) guarantee that it can fill the board without collisions (most of the time).
+
 Early on, when the snake is small, it breaks from the path to take “safe” shortcuts toward food. The hamiltonian circuit isn't used, but is still tracking the snake's head position to prepare for transitioning back onto the predestined path.
+
 As it grows, it transitions into full Hamiltonian mode for survival, with increasingly smaller corner-cutting allowance, until there's no corner-cutting at all.
 
-The result is a snake that behaves almost like it’s thinking… but it’s really just math.
+The result is a snake that behaves almost like it’s artificial intelligence, but it honestly can't even see the board. It only really knows where it's own head is compared to the food location, and it's lucky not to run into its own body.
 
 ## Design Notes
 
