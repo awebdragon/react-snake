@@ -302,7 +302,7 @@ export default function useHamiltonianSnake(gridSize:number, enabled:boolean = t
         // ---------- MODE: HAMILTONIAN ----------
         // After we transition into the hamiltonian path, we want the snake to cut corners. Fewer and fewer corners as she gets longer and is in more danger of not filling the whole board
         const maxSkip =
-          ratio < 0.1 ? 30 : ratio < 0.2 ? 20 : ratio < 0.25 ? 15 : ratio < 0.3 ? 5 : 1;
+          ratio < 0.1 ? 30 : ratio < 0.25 ? 20 : ratio < 0.3 ? 15 : ratio < 0.35 ? 5 : 1;
 
         const headDist = manhattan(head, food);
         const foodIndex = path.findIndex((p) => p.x === food.x && p.y === food.y);
